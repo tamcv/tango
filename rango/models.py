@@ -9,10 +9,8 @@ class Category(models.Model):
     slug = models.SlugField()
 
     def save(self, *args, **kwargs):
-        # Uncomment if you don't want the slug to change every time the name changes
         if self.id is None:
-           self.slug = slugify(self.name)
-        #self.slug = slugify(self.name)
+            self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
 
     def __unicode__(self):  #For Python 2, use __str__ on Python 3

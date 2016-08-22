@@ -23,12 +23,13 @@
         {% if pages %}
             <ul>
                 {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                <li><a href="{{ page.url }}">{{ page.title }}: {{ page.views }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
             <strong> There is no page! </strong>
         {% endif %}
+        <a href="/rango/add_category/">Add a New category</a><br />
         <a href="/rango/about/">About</a>
     </body>
 </html>
