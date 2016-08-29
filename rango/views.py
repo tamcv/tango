@@ -7,7 +7,8 @@ from rango.forms import CategoryForm, PageForm
 from django.template.defaultfilters import slugify
 from rango.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login
-from django.contrib import messages
+from datetime import datetime
+
 
 # Create your views here.
 def index(request):
@@ -16,10 +17,36 @@ def index(request):
     context_dict = {'categories': category_list,
                     'pages': page_list}
 
-    return render(request, 'rango/index.html', context_dict)
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).seconds > 5:
+            visits = visits + 1
+            reset_last_visit_time = True
+
+    else:
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+    response = render(request, 'rango/index.html', context_dict)
+
+    return response
 
 def about(request):
-    context_dict = {'rangosay': "Tam is very handsome"}
+    visits = request.session.get('visits')
+    if visits:
+        count = int(visits)
+    else:
+        count = 0
+    context_dict = {'visits': count}
 
     return render(request, 'rango/about.html', context_dict)
 

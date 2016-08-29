@@ -3,9 +3,8 @@
 {% load staticfiles %}
 
 {% block body_block %}
-
-    <h1>Rango says... {{rangosay}}</h1>
+    <h1>You have visited this site {{visits}} times</h1>
     <a href="/rango">Index</a><br />
-    <img height="500" width="400" src="{% static "images/Rango.jpg" %}" alt="Picture of Rango" />
+    <img height="50" width="40" src="{% static "images/Rango.jpg" %}" alt="Picture of Rango" />
 
 {% endblock %}
