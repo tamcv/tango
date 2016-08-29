@@ -1,10 +1,13 @@
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.shortcuts import render
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm
 from django.template.defaultfilters import slugify
 from rango.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 # Create your views here.
 def index(request):
@@ -123,7 +126,9 @@ def register(request):
     context_dict = {'user_form': user_form, 'profile_form': profile_form, 'registered': registered}
     return render(request, 'rango/register.html', context_dict)
 
+error_string = ''
 def user_login(request):
+    global error_string
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -131,6 +136,7 @@ def user_login(request):
         user = authenticate(username=username, password=password)
 
         if user:
+            error_string = ''
             if user.is_active:
                 login(request, user)
                 return  HttpResponseRedirect('/rango/')
@@ -138,7 +144,21 @@ def user_login(request):
                 return HttpResponse("Your rango account is disable")
         else:
             print "Invalid login details: {0}, {1}" .format(username, password)
-            return HttpResponse("Invalid login details supplied")
+            error_string = 'Invalid login details supplied'
+            return HttpResponseRedirect('/rango/login/')
 
     else:
-        return  render(request, 'rango/login.html', {})
+        return render(request, 'rango/login.html', {'error_string' : error_string})
+
+@login_required
+def restricted(request):
+    output_string = "You see this since you loged in"
+    return render(request, 'rango/restricted.html/', {'output_string':output_string})
+
+@login_required
+def user_logout(request):
+    # Since we know the user is logged in, we can now just log them out.
+    logout(request)
+
+    # Take the user back to the homepage.
+    return HttpResponseRedirect('/rango/')

@@ -1,25 +1,21 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
 {% load staticfiles %}
 
-<html xmlns="http://www.w3.org/1999/html">
+{% block title %}
+    How to Tango with Django!
+{% endblock %}
 
-    <head>
-        <title>Rango</title>
-    </head>
-
-    <body>
-        <a href="/rango/login/">Login</a>
-        <a href="/rango/register/">Register Here</a>
+{% block body_block %}
         {% if user.is_authenticated %}
-        <h1>Rango says... hello {{ user.username }}!</h1>
+            <h1>Rango says... hello {{ user.username }}!</h1>
         {% else %}
         <h1>Rango says... hello world!</h1>
         {% endif %}
         {% if categories %}
             <ul>
                 {% for category in categories %}
-                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                <li><a href="{% url 'category' category.slug %}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -35,7 +31,5 @@
         {% else %}
             <strong> There is no page! </strong>
         {% endif %}
-        <a href="/rango/add_category/">Add a New category</a><br />
-        <a href="/rango/about/">About</a>
-    </body>
+{% endblock %}
 </html>
